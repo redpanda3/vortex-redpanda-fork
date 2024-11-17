@@ -3,7 +3,7 @@ include $(ROOT_DIR)/config.mk
 
 SRC_DIR := $(VORTEX_HOME)/hw/syn/yosys
 
-TOP_LEVEL_ENTITY ?= Vortex
+TOP_LEVEL_ENTITY ?= VX_core_top
 PREFIX ?= build
 NUM_CORES ?= 1
 
@@ -43,11 +43,13 @@ CONFIGS += $(CONFIGS_$(NUM_CORES)c)
 
 # include paths
 FPU_INCLUDE = -I$(RTL_DIR)/fpu
-ifneq (,$(findstring FPU_FPNEW,$(CONFIGS)))
-	FPU_INCLUDE += -J$(THIRD_PARTY_DIR)/cvfpu/src/common_cells/include -J$(THIRD_PARTY_DIR)/cvfpu/src/common_cells/src -J$(THIRD_PARTY_DIR)/cvfpu/src/fpu_div_sqrt_mvp/hdl -J$(THIRD_PARTY_DIR)/cvfpu/src
-endif
+#ifneq (,$(findstring FPU_FPNEW,$(CONFIGS)))
+FPU_INCLUDE += -I$(THIRD_PARTY_DIR)/cvfpu/src/common_cells/include -I$(THIRD_PARTY_DIR)/cvfpu/src/common_cells/src -I$(THIRD_PARTY_DIR)/cvfpu/src/fpu_div_sqrt_mvp/hdl -I$(THIRD_PARTY_DIR)/cvfpu/src
+#endif
 RTL_INCLUDE = -I$(RTL_DIR) -I$(RTL_DIR)/libs -I$(RTL_DIR)/interfaces -I$(RTL_DIR)/core -I$(RTL_DIR)/mem -I$(RTL_DIR)/cache
 RTL_INCLUDE += $(FPU_INCLUDE)
+
+
 
 # Debugging
 ifdef DEBUG
@@ -67,18 +69,21 @@ ifdef PERF
 	CFLAGS += -DPERF_ENABLE
 endif
 
-CFLAGS += -DSYNTHESIS -DYOSYS
+CFLAGS += -DSYNTHESIS -DYOSYS -DFPU_FPNEW
 CFLAGS += -DXLEN_$(XLEN)
 CFLAGS += $(CONFIGS)
 CFLAGS += $(RTL_INCLUDE)
 
 # Build targets
-all: clean build
+all: clean gen-sources patch-yosys sv2v
 
 gen-sources: $(BUILD_DIR)/sources.txt
 $(BUILD_DIR)/sources.txt:
 	mkdir -p $(BUILD_DIR); cd $(BUILD_DIR); $(SCRIPT_DIR)/gen_sources.sh -P $(CFLAGS) -Csrc -Osources.txt
 
+patch-yosys: 
+	$(SCRIPT_DIR)/openlane_patch.py $(BUILD_DIR)/src
+	
 sv2v: $(BUILD_DIR)/project.v
 $(BUILD_DIR)/project.v: gen-sources
 	cd $(BUILD_DIR); $(SCRIPT_DIR)/sv2v.sh -t$(TOP_LEVEL_ENTITY) -Isrc -oproject.v
