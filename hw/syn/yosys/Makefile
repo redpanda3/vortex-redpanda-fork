@@ -32,7 +32,8 @@ DBG_SCOPE_FLAGS += -DDBG_SCOPE_LSU
 
 
 # cluster configuration
-CONFIGS_1c  := -DNUM_CLUSTERS=1 -DNUM_CORES=1
+## yuda added basic configuration
+CONFIGS_1c  := -DNUM_CLUSTERS=1 -DNUM_CORES=1 -DNUM_WARPS=1 -DNUM_THREADS=1 -DL1_DISABLE -DLMEM_DISABLE
 CONFIGS_2c  := -DNUM_CLUSTERS=1 -DNUM_CORES=2
 CONFIGS_4c  := -DNUM_CLUSTERS=1 -DNUM_CORES=4  -DL2_ENABLE
 CONFIGS_8c	:= -DNUM_CLUSTERS=1 -DNUM_CORES=8  -DL2_ENABLE
@@ -75,7 +76,7 @@ CFLAGS += $(CONFIGS)
 CFLAGS += $(RTL_INCLUDE)
 
 # Build targets
-all: clean gen-sources patch-yosys sv2v
+all: clean gen-sources patch-yosys sv2v build elaborate synthesis
 
 gen-sources: $(BUILD_DIR)/sources.txt
 $(BUILD_DIR)/sources.txt:
