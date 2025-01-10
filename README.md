@@ -79,8 +79,10 @@ Another part is the the width of reg_ena_i signal, yosys cannot fully recognize 
 input logic [ExtRegEnaWidth-1 + (ExtRegEnaWidth == 0? 1 : 0) :0]  reg_ena_i
 ```
 
-To remove the unsed net, followed by this (https://github.com/YosysHQ/yosys/issues/94). Make sure to run 
-hierarchy first. Those steps were included already in the yosys/Makefile by vortex original author Professor Blaise.
+To remove the unsed net issue in control_mvp within cvfpu, current solution is to set all the outputs of control_mvp. I'm writing an equivalent module in chisel to replay the detailed bug. 
+
+## Result in Openlane flow
+![alt text](docs/img/image.png)
 
 ## Acknowledgement.
 
