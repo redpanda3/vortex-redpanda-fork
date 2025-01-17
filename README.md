@@ -11,7 +11,7 @@ The area is expected to be 0.6mm^2 per VX_core_top without considering utilizati
 
 Other part of work is to generate a VX_core_top that can be synthesized by yosys in openlane flow. We try the commercial tools, which gave no error. So we made a patch and verified by equivalent check.
 
-An EAD(External Architecure Document) is appended under docs folder, includes config parameters, interface description of each module, and EAS(External Architecture Spec). They are for soc team to use. 
+An EAD(External Architecure Document) is appended under docs/ead folder, includes config parameters, interface description of each module, and EAS(External Architecture Spec). They are for soc team to use. 
 
 ## Usage
 
